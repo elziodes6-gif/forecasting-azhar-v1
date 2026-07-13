@@ -78,11 +78,11 @@ if st.session_state['halaman'] == 0:
 
     col1, col2 = st.columns(2, gap="large")
     with col1:
-        teks_forecasting = "Forecasting atau peramalan adalah proses memperkirakan suatu kejadian atau kebutuhan yang akan terjadi pada masa yang akan datang berdasarkan data yang pernah terjadi sebelumnya (data historis)."
+        teks_forecasting = "<b>Forecasting (Peramalan)</b> ibarat kita mencoba menebak cuaca besok dengan melihat catatan cuaca beberapa hari ke belakang.<br><br>Dalam bisnis atau pekerjaan sehari-hari, ini berarti kita memperkirakan target penjualan, kebutuhan stok barang, atau jumlah produksi di masa depan dengan menggunakan <b>data masa lalu (data historis)</b>.<br><br>Tujuannya? Supaya keputusan yang kita ambil tidak sekadar asal tebak (<i>feeling</i>), melainkan punya perhitungan yang masuk akal dan meminimalkan risiko kerugian."
         gambar_kotak_penjelasan("Apa itu Forecasting?", WARNA_AKSEN, teks_forecasting)
     with col2:
-        teks_metode = "<p style='margin-top: 0; margin-bottom: 10px;'><b>Single, Double, dan Triple Exponential Smoothing:</b><br>- <b>Single (SES)</b>: Cocok untuk data berpola acak tanpa tren.<br>- <b>Double (DES)</b>: Mengakomodasi data yang memiliki tren (terus naik/turun).<br>- <b>Triple (TES)</b>: Mengakomodasi tren sekaligus pola musiman (berulang).</p><p style='margin-bottom: 0;'><b>Moving Average & WMA:</b> Metode yang menggunakan rata-rata data terakhir untuk peramalan berikutnya.</p>"
-        gambar_kotak_penjelasan("Metode Peramalan", WARNA_AKSEN, teks_metode)
+        teks_metode = "<p style='margin-top: 0; margin-bottom: 10px;'><b>1. Single Exponential Smoothing (SES)</b><br>Ibarat jalan datar. Sangat pas untuk data yang stabil/biasa saja, tidak ada tren naik atau turun yang tajam.</p><p style='margin-bottom: 10px;'><b>2. Double Exponential Smoothing (DES)</b><br>Ibarat jalan tanjakan atau turunan. Pas untuk data yang secara jelas terus meningkat atau terus menurun (punya Tren).</p><p style='margin-bottom: 10px;'><b>3. Triple Exponential Smoothing (TES)</b><br>Ibarat jalan bergelombang yang teratur. Cocok untuk data yang punya tren sekaligus punya pola musiman (misalnya: penjualan baju selalu naik drastis setiap menjelang lebaran).</p><p style='margin-bottom: 0;'><b>4. Moving Average (MA) & Weighted (WMA)</b><br>Cara paling sederhana, yaitu mengambil nilai rata-rata dari beberapa waktu terakhir untuk menebak waktu berikutnya. WMA lebih pintar karena data yang paling baru dianggap lebih penting/berbobot.</p>"
+        gambar_kotak_penjelasan("Penjelasan Metode (Bahasa Awam)", WARNA_AKSEN, teks_metode)
 
     st.write("")
     _, col_btn, _ = st.columns([2, 1, 2])
@@ -97,13 +97,13 @@ elif st.session_state['halaman'] == 1:
     
     col1, col2, col3 = st.columns(3, gap="large")
     with col1:
-        teks_alpha = "<b>Alpha (α)</b> mengatur pembaruan level data dasar.<br><br><b>Alpha kecil</b>: Forecast berubah perlahan (mempertimbangkan data lama).<br><b>Alpha besar</b>: Forecast cepat beradaptasi dengan perubahan data terbaru."
+        teks_alpha = "<b>Alpha (α)</b> mengatur seberapa penting data terbaru memengaruhi tebakan dasar kita.<br><br><b>Alpha kecil</b>: Berubah perlahan (setia pada data lama).<br><b>Alpha besar</b>: Cepat beradaptasi dengan perubahan data terbaru."
         gambar_kotak_penjelasan("Parameter Alpha", WARNA_AKSEN, teks_alpha)
     with col2:
-        teks_beta = "<b>Beta (β)</b> mengatur kecepatan pembaruan tren.<br><br><b>Beta kecil</b>: Tren berubah perlahan.<br><b>Beta besar</b>: Tren sangat sensitif terhadap arah pergerakan terbaru."
+        teks_beta = "<b>Beta (β)</b> mengatur kecepatan pembaruan arah/tren.<br><br><b>Beta kecil</b>: Tren dianggap stabil dan berubah perlahan.<br><b>Beta besar</b>: Tren sangat sensitif dan gampang berubah mengikuti arah terbaru."
         gambar_kotak_penjelasan("Parameter Beta", WARNA_AKSEN, teks_beta)
     with col3:
-        teks_gamma = "<b>Gamma (γ)</b> khusus mengatur pola musiman (Triple Exponential Smoothing).<br><br><b>Gamma kecil</b>: Musiman stabil berdasarkan sejarah panjang.<br><b>Gamma besar</b>: Pola musiman beradaptasi cepat dengan fluktuasi siklus terbaru."
+        teks_gamma = "<b>Gamma (γ)</b> khusus mengatur seberapa kuat pola musiman memengaruhi tebakan.<br><br><b>Gamma kecil</b>: Pola musiman stabil berdasarkan sejarah panjang.<br><b>Gamma besar</b>: Pola musiman gampang berubah mengikuti fluktuasi siklus terbaru."
         gambar_kotak_penjelasan("Parameter Gamma", WARNA_AKSEN, teks_gamma)
 
     st.write("")
@@ -153,10 +153,10 @@ elif st.session_state['halaman'] == 2:
 
     st.markdown("<hr style='border:1px solid #EEEEEE'>", unsafe_allow_html=True)
     
-    # Visibilitas parameter
+    # Visibilitas parameter (Semua SES, DES, TES menampilkan Alfa, Beta, dan Gamma sesuai permintaan)
     tampilkan_alfa = metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]
     tampilkan_beta = metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]
-    tampilkan_gamma = metode == "Triple Exponential Smoothing (TES)"
+    tampilkan_gamma = metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]
     tampilkan_periode = metode in ["Moving Average (MA)", "Weighted Moving Average (WMA)"]
 
     alfa_global, beta_global, gamma_global = 0.20, 0.11, 0.10
@@ -192,7 +192,9 @@ elif st.session_state['halaman'] == 2:
                 st.info("Gamma (γ) Dinonaktifkan (Bernilai 0)")
                 gamma_global = 0.0
             
-            periode_musiman = st.number_input("Periode Musiman (L):", min_value=2, max_value=24, value=4, step=1)
+            # Input periode musiman hanya relevan jika metode adalah TES
+            if metode == "Triple Exponential Smoothing (TES)":
+                periode_musiman = st.number_input("Periode Musiman (L):", min_value=2, max_value=24, value=4, step=1)
 
     if tampilkan_periode:
         with col_p1: 
@@ -393,11 +395,7 @@ elif st.session_state['halaman'] == 2:
                     fig.add_trace(go.Scatter(x=df_hist['Index'], y=df_hist['Hasil Forecasting'], mode='lines+markers', name='Fits', line=dict(color='#A03A3A', dash='dash')))
                     fig.add_trace(go.Scatter(x=df_future['Index'], y=df_future['Hasil Forecasting'], mode='lines+markers', name='Forecasts', line=dict(color='#2CA02C', dash='dash')))
                     
-                    if metode == "Double Exponential Smoothing (DES)":
-                        const_text = f"α: {alfa_global:.2f}<br>β: {beta_global:.2f}"
-                    elif metode == "Single Exponential Smoothing (SES)":
-                        const_text = f"α: {alfa_global:.2f}<br>β: {beta_global:.2f}"
-                    elif metode == "Triple Exponential Smoothing (TES)":
+                    if metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]:
                         const_text = f"α: {alfa_global:.2f}<br>β: {beta_global:.2f}<br>γ: {gamma_global:.2f}"
                     else:
                         const_text = f"Periode: {periode_window}"
