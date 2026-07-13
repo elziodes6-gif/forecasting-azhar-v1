@@ -14,6 +14,12 @@ if 'halaman' not in st.session_state:
 if 'riwayat_forecasting' not in st.session_state:
     st.session_state['riwayat_forecasting'] = []
 
+if 'num_rows' not in st.session_state:
+    st.session_state['num_rows'] = 1000
+
+if 'num_cols' not in st.session_state:
+    st.session_state['num_cols'] = 1000
+
 def lanjut_halaman():
     if st.session_state['halaman'] < 2:
         st.session_state['halaman'] += 1
@@ -23,7 +29,7 @@ def kembali_halaman():
         st.session_state['halaman'] -= 1
 
 # --- KUSTOMISASI CSS (TEMA PUTIH AKSEN MERAH SEDANG) ---
-st.markdown("""
+st.markdown('''
 <style>
     [data-testid="stAppViewContainer"] {
         background-color: #FFFFFF !important; 
@@ -44,11 +50,11 @@ st.markdown("""
         color: #000000 !important;
     }
 </style>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
 # --- FUNGSI PEMBUAT KOTAK DESAIN ---
 def gambar_kotak_penjelasan(judul, warna_aksen, teks):
-    html = f"""<div style="margin-top: 30px; margin-bottom: 10px;"><div style="border: 2px solid {warna_aksen}; border-radius: 12px; padding: 30px 25px 20px 25px; position: relative; background-color: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.03);"><div style="background-color: {warna_aksen}; color: #FFFFFF; padding: 6px 25px; border-radius: 6px; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 15px; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; text-transform: uppercase; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.3);">{judul}</div><div style="color: #444444; font-size: 15px; line-height: 1.7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: justify;">{teks}</div></div></div>"""
+    html = f"<div style='margin-top: 30px; margin-bottom: 10px;'><div style='border: 2px solid {warna_aksen}; border-radius: 12px; padding: 30px 25px 20px 25px; position: relative; background-color: #FFFFFF; box-shadow: 0 4px 15px rgba(0,0,0,0.03);'><div style='background-color: {warna_aksen}; color: #FFFFFF; padding: 6px 25px; border-radius: 6px; font-weight: bold; font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif; font-size: 15px; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); white-space: nowrap; text-transform: uppercase; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.3);'>{judul}</div><div style='color: #444444; font-size: 15px; line-height: 1.7; font-family: \"Segoe UI\", Tahoma, Geneva, Verdana, sans-serif; text-align: justify;'>{teks}</div></div></div>"
     st.markdown(html, unsafe_allow_html=True)
 
 WARNA_AKSEN = "#D9534F"
@@ -75,7 +81,7 @@ if st.session_state['halaman'] == 0:
         teks_forecasting = "Forecasting atau peramalan adalah proses memperkirakan suatu kejadian atau kebutuhan yang akan terjadi pada masa yang akan datang berdasarkan data yang pernah terjadi sebelumnya (data historis)."
         gambar_kotak_penjelasan("Apa itu Forecasting?", WARNA_AKSEN, teks_forecasting)
     with col2:
-        teks_metode = "<p style='margin-top: 0; margin-bottom: 10px;'><b>Single, Double, dan Triple Exponential Smoothing:</b> Metode ini mengakomodasi data berpola acak, tren, hingga yang memiliki unsur musiman.</p><p style='margin-bottom: 0;'><b>Moving Average & WMA:</b> Metode yang menggunakan rata-rata data terakhir untuk peramalan berikutnya.</p>"
+        teks_metode = "<p style='margin-top: 0; margin-bottom: 10px;'><b>Single, Double, dan Triple Exponential Smoothing:</b><br>- <b>Single (SES)</b>: Cocok untuk data berpola acak tanpa tren.<br>- <b>Double (DES)</b>: Mengakomodasi data yang memiliki tren (terus naik/turun).<br>- <b>Triple (TES)</b>: Mengakomodasi tren sekaligus pola musiman (berulang).</p><p style='margin-bottom: 0;'><b>Moving Average & WMA:</b> Metode yang menggunakan rata-rata data terakhir untuk peramalan berikutnya.</p>"
         gambar_kotak_penjelasan("Metode Peramalan", WARNA_AKSEN, teks_metode)
 
     st.write("")
@@ -89,13 +95,16 @@ if st.session_state['halaman'] == 0:
 elif st.session_state['halaman'] == 1:
     st.markdown(f"<h2 style='text-align: center; margin-bottom: 10px; color: {WARNA_AKSEN}; font-weight: 800; letter-spacing: 1px;'>PARAMETER KONTROL</h2>", unsafe_allow_html=True)
     
-    col1, col2 = st.columns(2, gap="large")
+    col1, col2, col3 = st.columns(3, gap="large")
     with col1:
-        teks_alpha = "Alpha (α) menentukan seberapa besar pengaruh data terbaru terhadap hasil forecast."
+        teks_alpha = "<b>Alpha (α)</b> mengatur pembaruan level data dasar.<br><br><b>Alpha kecil</b>: Forecast berubah perlahan (mempertimbangkan data lama).<br><b>Alpha besar</b>: Forecast cepat beradaptasi dengan perubahan data terbaru."
         gambar_kotak_penjelasan("Parameter Alpha", WARNA_AKSEN, teks_alpha)
     with col2:
-        teks_beta = "Beta (β) mengatur kecepatan pembaruan tren. Gamma (γ) mengatur komponen musiman."
-        gambar_kotak_penjelasan("Parameter Beta & Gamma", WARNA_AKSEN, teks_beta)
+        teks_beta = "<b>Beta (β)</b> mengatur kecepatan pembaruan tren.<br><br><b>Beta kecil</b>: Tren berubah perlahan.<br><b>Beta besar</b>: Tren sangat sensitif terhadap arah pergerakan terbaru."
+        gambar_kotak_penjelasan("Parameter Beta", WARNA_AKSEN, teks_beta)
+    with col3:
+        teks_gamma = "<b>Gamma (γ)</b> khusus mengatur pola musiman (Triple Exponential Smoothing).<br><br><b>Gamma kecil</b>: Musiman stabil berdasarkan sejarah panjang.<br><b>Gamma besar</b>: Pola musiman beradaptasi cepat dengan fluktuasi siklus terbaru."
+        gambar_kotak_penjelasan("Parameter Gamma", WARNA_AKSEN, teks_gamma)
 
     st.write("")
     col_btn_kiri, _, col_btn_kanan = st.columns([1, 2, 1])
@@ -144,9 +153,8 @@ elif st.session_state['halaman'] == 2:
 
     st.markdown("<hr style='border:1px solid #EEEEEE'>", unsafe_allow_html=True)
     
-    # Pengaturan visibilitas parameter
+    # Visibilitas parameter
     tampilkan_alfa = metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]
-    # Menampilkan beta untuk SES seperti permintaan, meskipun secara matematis SES tidak memiliki tren
     tampilkan_beta = metode in ["Single Exponential Smoothing (SES)", "Double Exponential Smoothing (DES)", "Triple Exponential Smoothing (TES)"]
     tampilkan_gamma = metode == "Triple Exponential Smoothing (TES)"
     tampilkan_periode = metode in ["Moving Average (MA)", "Weighted Moving Average (WMA)"]
@@ -158,29 +166,63 @@ elif st.session_state['halaman'] == 2:
     col_p1, col_p2, col_p3 = st.columns(3)
     
     if tampilkan_alfa:
-        with col_p1: alfa_global = st.number_input("Nilai Alfa (α):", min_value=0.0, max_value=1.0, value=0.20, step=0.01)
+        with col_p1: 
+            pakai_alfa = st.radio("Gunakan Alfa (α)?", ["Ya", "Tidak"], horizontal=True, key="rad_alfa")
+            if pakai_alfa == "Ya":
+                alfa_global = st.number_input("Nilai Alfa (α):", min_value=0.0, max_value=1.0, value=0.20, step=0.01)
+            else:
+                st.info("Alfa (α) Dinonaktifkan (Bernilai 0)")
+                alfa_global = 0.0
+
     if tampilkan_beta:
-        with col_p2: beta_global = st.number_input("Nilai Beta (β):", min_value=0.0, max_value=1.0, value=0.11, step=0.01)
+        with col_p2: 
+            pakai_beta = st.radio("Gunakan Beta (β)?", ["Ya", "Tidak"], horizontal=True, key="rad_beta")
+            if pakai_beta == "Ya":
+                beta_global = st.number_input("Nilai Beta (β):", min_value=0.0, max_value=1.0, value=0.11, step=0.01)
+            else:
+                st.info("Beta (β) Dinonaktifkan (Bernilai 0)")
+                beta_global = 0.0
+
     if tampilkan_gamma:
-        with col_p3: gamma_global = st.number_input("Nilai Gamma (γ):", min_value=0.0, max_value=1.0, value=0.10, step=0.01)
-        with col_p3: periode_musiman = st.number_input("Periode Musiman (L):", min_value=2, max_value=24, value=4, step=1)
+        with col_p3: 
+            pakai_gamma = st.radio("Gunakan Gamma (γ)?", ["Ya", "Tidak"], horizontal=True, key="rad_gamma")
+            if pakai_gamma == "Ya":
+                gamma_global = st.number_input("Nilai Gamma (γ):", min_value=0.0, max_value=1.0, value=0.10, step=0.01)
+            else:
+                st.info("Gamma (γ) Dinonaktifkan (Bernilai 0)")
+                gamma_global = 0.0
+            
+            periode_musiman = st.number_input("Periode Musiman (L):", min_value=2, max_value=24, value=4, step=1)
+
     if tampilkan_periode:
-        with col_p1: periode_window = st.slider("Jumlah Periode Rata-rata:", min_value=2, max_value=12, value=3, step=1)
+        with col_p1: 
+            periode_window = st.slider("Jumlah Periode Rata-rata:", min_value=2, max_value=12, value=3, step=1)
 
     st.markdown("<hr style='border:1px solid #EEEEEE'>", unsafe_allow_html=True)
     opsi_input = st.radio("Pilih Metode Input Data:", ["Input Manual via Tabel Excel", "Unggah (Upload) File CSV / Excel"], horizontal=True)
 
-    df_input_vertikal = None
+    df_input_grid = None
     df_raw_upload = None
     kolom_pilihan_upload = None
 
     if opsi_input == "Input Manual via Tabel Excel":
         st.markdown(f"<h3 style='color: {WARNA_AKSEN};'>Tabel Input Data (Excel-like)</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #666666; font-size: 13px;'>Ketik angka ke bawah. Tekan <b>Enter</b> untuk otomatis turun ke baris baru di bawahnya. Anda dapat menghapus atau menambah baris secara dinamis.</p>", unsafe_allow_html=True)
+        st.markdown("<p style='color: #666666; font-size: 13px;'>Isi data secara menyamping atau ke bawah. Jika batas terlampaui, gunakan tombol berikut untuk menambah area kerja.</p>", unsafe_allow_html=True)
         
-        # Membuat tabel vertikal (mirip excel) menggunakan num_rows="dynamic"
-        df_template = pd.DataFrame({"Data Historis": [None] * 12})
-        df_input_vertikal = st.data_editor(df_template, use_container_width=True, num_rows="dynamic")
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            if st.button("➕ Tambahkan Kolom Kebawah (Tambah 100 Baris)"):
+                st.session_state['num_rows'] += 100
+        with col_btn2:
+            if st.button("➕ Tambahkan Kolom Menyamping (Tambah 50 Kolom)"):
+                st.session_state['num_cols'] += 50
+
+        # Membangun dataframe kosong sesuai batas
+        cols = [f"Kolom {i+1}" for i in range(st.session_state['num_cols'])]
+        df_template = pd.DataFrame(index=range(st.session_state['num_rows']), columns=cols)
+        
+        # Grid interaktif
+        df_input_grid = st.data_editor(df_template, use_container_width=True)
 
     else:
         st.markdown(f"<h3 style='color: {WARNA_AKSEN};'>Unggah File Data</h3>", unsafe_allow_html=True)
@@ -197,11 +239,19 @@ elif st.session_state['halaman'] == 2:
         df_kerja = pd.DataFrame()
 
         if opsi_input == "Input Manual via Tabel Excel":
-            if df_input_vertikal is None:
+            if df_input_grid is None:
                 data_valid = False
             else:
-                df_kerja = df_input_vertikal.copy()
-                df_kerja['Data Historis'] = pd.to_numeric(df_kerja['Data Historis'], errors='coerce')
+                # Membaca data dari tabel 2D (mengambil nilai berurutan dari kiri ke kanan, atas ke bawah)
+                raw_data = df_input_grid.values.flatten()
+                cleaned_data = []
+                for val in raw_data:
+                    if pd.notnull(val) and str(val).strip() != "":
+                        try:
+                            cleaned_data.append(float(val))
+                        except ValueError:
+                            pass
+                df_kerja = pd.DataFrame({"Data Historis": cleaned_data})
         else:
             if df_raw_upload is None or kolom_pilihan_upload is None:
                 st.error("Pastikan file telah diunggah dan kolom data dipilih.")
